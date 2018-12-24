@@ -2,7 +2,8 @@
 <div class="row">
   <div class="col"></div>
   <div class="col">
-    <h3 class="text-center text">{{loadingMessage}}</h3>
+    <h5 class="text-center text">{{loadingMessage}}</h5>
+    <h3 class="text-center text-warning">{{apiMessage}}</h3>
     <form [formGroup]="loginForm" (ngSubmit)="OnSubmit()" novalidate>
       <div class="form-group">
         <label for="usernameInput" class="text">Username</label>

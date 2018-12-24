@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Validator } from 'src/app/classes/validator';
+import { MockApiService } from 'src/app/mocks/services/mock-api.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -16,8 +18,10 @@ export class LoginComponent implements OnInit {
   private passwordValidationMessage = null;
   private formValidated = false;
   private loadingMessage = null;
+  private apiMessage = null;
+  private $loginObserver: Observable<boolean>;
 
-  constructor() { }
+  constructor(private api: MockApiService) {}
 
   OnSubmit() {
     const usernameValid = this.validateUsername();
@@ -25,6 +29,16 @@ export class LoginComponent implements OnInit {
     this.formValidated = true;
     if (usernameValid && passwordValid) {
       this.loadingMessage = 'Logging you in please wait';
+      this.api.Login().subscribe({
+        error: (err) => {
+          this.loadingMessage = null;
+          this.apiMessage = err.message;
+        },
+        complete: () => {
+          this.loadingMessage = null;
+          this.apiMessage = 'Logged in';
+        }
+      });
     }
   }
 
@@ -50,7 +64,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
 }

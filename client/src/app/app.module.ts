@@ -6,6 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/util/navbar/navbar.component';
 import { LoginComponent } from './components/routes/login/login.component';
+import { MockApiService } from './mocks/services/mock-api.service';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { LoginComponent } from './components/routes/login/login.component';
     AppRoutingModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [MockApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
