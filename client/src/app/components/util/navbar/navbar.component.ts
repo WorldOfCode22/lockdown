@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MockApiService } from 'src/app/mocks/services/mock-api.service';
 
 @Component({
   selector: 'app-navbar',
@@ -8,8 +9,9 @@ import { Component, OnInit } from '@angular/core';
 export class NavbarComponent implements OnInit {
   private navbarOpen = false;
   private usersDropdownOpen = false;
+  private userLoggedIn = false;
 
-  constructor() { }
+  constructor(private api: MockApiService) { }
 
   get NavbarOpen() {
     return this.navbarOpen;
@@ -28,6 +30,13 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.api.HasApiKey()) {this.userLoggedIn = true; }
+    this.api.AuthSubject.subscribe({
+      next: data => {
+        if (data === 'login') {this.userLoggedIn = true; }
+        if (data === 'logout') {this.userLoggedIn = false; }
+      }
+    });
   }
 
 }

@@ -14,10 +14,14 @@
           Users
         </a>
         <div id="users-dropdown" [className]="UsersDropdownOpen ? 'dropdown-menu show' : 'dropdown-menu'" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Login/Logout</a>
+          <a *ngIf="userLoggedIn; else userNotLoggedIn" class="dropdown-item" href="#">Logout</a>
           <a class="dropdown-item" href="#">Passwords</a>
         </div>
       </li>
     </ul>
   </div>
 </nav>
+
+<ng-template #userNotLoggedIn>
+  <a class="dropdown-item" [routerLink]="['/login']">Login</a>
+</ng-template>
