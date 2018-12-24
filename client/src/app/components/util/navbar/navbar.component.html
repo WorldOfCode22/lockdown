@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light theme-silver">
-  <a class="navbar-brand" href="#">Navbar</a>
+  <a class="navbar-brand">Navbar</a>
   <button (click)="NavbarToggle()" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -7,15 +7,15 @@
   <div [className]="NavbarOpen ? 'collapse navbar-collapse show' : 'collapse navbar-collapse'" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">Home</a>
+        <a class="nav-link">Home</a>
       </li>
       <li class="nav-item dropdown">
-        <a id="users-dropdown-toggle" (click)="UsersToggle()" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a id="users-dropdown-toggle" (click)="UsersToggle()" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Users
         </a>
         <div id="users-dropdown" [className]="UsersDropdownOpen ? 'dropdown-menu show' : 'dropdown-menu'" aria-labelledby="navbarDropdown">
-          <a *ngIf="userLoggedIn; else userNotLoggedIn" class="dropdown-item" href="#">Logout</a>
-          <a class="dropdown-item" href="#">Passwords</a>
+          <a *ngIf="userLoggedIn; else userNotLoggedIn" class="dropdown-item" >Logout</a>
+          <a class="dropdown-item" [routerLink]="['password']">Passwords</a>
         </div>
       </li>
     </ul>
