@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User } from 'src/app/classes/user';
+import { User, IPasswordProvider } from 'src/app/classes/user';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable({
@@ -20,12 +20,25 @@ export class MockApiService {
 
   AuthListener() {return this.AuthSubject; }
 
+  newProvider(provider: IPasswordProvider) {
+    return new Observable<IPasswordProvider[]>((observer) => {
+      setTimeout(() => {
+        if (this.ValidNextRequest) {
+          this.User.AddProvider(provider);
+          observer.next(this.User.Providers);
+        } else {
+          observer.error('Some random error has occurred');
+        }
+      }, 1000);
+    });
+  }
+
   GetUser() {
     return new Observable<User>((observer) => {
       if (this.User) {return observer.next(this.User); }
       setTimeout(() => {
         if (this.ValidNextRequest && this.ApiKey) {
-          this.User = new User({username: 'testtest', id: '1234'});
+          this.User = new User({username: 'testtest', id: '1234', passwordProviders: []});
           observer.next(this.User);
         } else if (this.ValidNextRequest && !this.ApiKey) {
           observer.error(new Error('You are not logged in'));
