@@ -7,12 +7,14 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/util/navbar/navbar.component';
 import { LoginComponent } from './components/routes/login/login.component';
 import { MockApiService } from './mocks/services/mock-api.service';
+import { PasswordKeeperComponent } from './components/routes/password-keeper/password-keeper.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    LoginComponent
+    LoginComponent,
+    PasswordKeeperComponent
   ],
   imports: [
     BrowserModule,
