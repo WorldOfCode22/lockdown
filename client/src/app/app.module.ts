@@ -8,13 +8,15 @@ import { NavbarComponent } from './components/util/navbar/navbar.component';
 import { LoginComponent } from './components/routes/login/login.component';
 import { MockApiService } from './mocks/services/mock-api.service';
 import { PasswordKeeperComponent } from './components/routes/password-keeper/password-keeper.component';
+import { PasswordCardComponent } from './components/util/password-card/password-card.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     LoginComponent,
-    PasswordKeeperComponent
+    PasswordKeeperComponent,
+    PasswordCardComponent
   ],
   imports: [
     BrowserModule,
