@@ -50,7 +50,7 @@ export class MockApiService {
   }
 
   Login() {
-    return new Observable<boolean>((observer) => {
+    return new Observable((observer) => {
       setTimeout(() => {
         if (this.ValidNextRequest) {
           this.AuthSubject.next('login');
