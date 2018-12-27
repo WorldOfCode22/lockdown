@@ -26,4 +26,8 @@ export class PasswordKeeperComponent implements OnInit {
       }
     );
   }
+
+  OnProvider($event: any) {
+    this.providers = $event;
+  }
 }
