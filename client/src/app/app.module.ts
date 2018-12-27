@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
+import { ClipboardModule } from 'ngx-clipboard';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/util/navbar/navbar.component';
 import { LoginComponent } from './components/routes/login/login.component';
@@ -21,7 +22,8 @@ import { PasswordCardComponent } from './components/util/password-card/password-
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ClipboardModule
   ],
   providers: [MockApiService],
   bootstrap: [AppComponent]
