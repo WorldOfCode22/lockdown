@@ -65,6 +65,11 @@ export class MockApiService {
     });
   }
 
+  Logout() {
+    this.AuthSubject.next('logout');
+    this.ApiKey = null;
+  }
+
   Register() {
     return new Observable((observer) => {
       setTimeout(() => {

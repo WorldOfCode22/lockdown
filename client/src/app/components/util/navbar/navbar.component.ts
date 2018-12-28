@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MockApiService } from 'src/app/mocks/services/mock-api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -10,8 +11,9 @@ export class NavbarComponent implements OnInit {
   private navbarOpen = false;
   private usersDropdownOpen = false;
   private userLoggedIn = false;
+  private message = null;
 
-  constructor(private api: MockApiService) { }
+  constructor(private api: MockApiService, private router: Router) { }
 
   get NavbarOpen() {
     return this.navbarOpen;
@@ -27,6 +29,11 @@ export class NavbarComponent implements OnInit {
 
   UsersToggle() {
     this.usersDropdownOpen = !this.usersDropdownOpen;
+  }
+
+  Logout() {
+    this.api.Logout();
+    this.router.navigate(['/']);
   }
 
   ngOnInit() {
