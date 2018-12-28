@@ -65,4 +65,20 @@ export class MockApiService {
     });
   }
 
+  Register() {
+    return new Observable((observer) => {
+      setTimeout(() => {
+        if (this.ValidNextRequest) {
+          this.AuthSubject.next('login');
+          this.ApiKey = 'testApiKey';
+          // next(true);
+          observer.complete();
+        } else {
+          observer.error(new Error('Login Error'));
+          // complete();
+        }
+      }, this.TimeToExe);
+    });
+  }
+
 }
