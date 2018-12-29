@@ -7,11 +7,12 @@ export abstract class Validator {
 
     public static password = passwordValidator;
 
-    public static validateUsername(username: string) {
+    public static validateUsername(username: string, checkTaken: boolean) {
         const usernameSpec = Validator.username;
         return new Observable((observer) => {
             /// makes sure username length is valid
             if (username.length >= usernameSpec.min && username.length <= usernameSpec.max ) {
+                if (!checkTaken) { observer.complete(); observer.unsubscribe(); return; }
                 /// see if username is not already taken
                 User.findOne({username}, (err, doc) => {
                     /// catch mongo error
@@ -40,7 +41,7 @@ export abstract class Validator {
         });
     }
 
-    public static validatePassword(password: string) {
+    public static validatePassword(password: string ) {
         const passSpec = Validator.password;
         return new Observable((observer) => {
             if (password.length >= passSpec.min && password.length <= passSpec.max) {
