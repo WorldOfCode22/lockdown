@@ -7,20 +7,19 @@ import { User } from "../models/user-model";
 const userRouter = Router();
 
 userRouter.post("/", (req: IRequest, res, next) => {
-    console.log("Hello");
     const username = req.body.username;
     const password = req.body.password;
     Validator.validateUsername(username).subscribe(
         () => null,
-        (err) => { req.error = err; console.log(err); return next(); },
+        (err) => { req.error = err; return next(); },
         () => {
             Validator.validatePassword(password).subscribe(
                 () => null,
-                (err) => { req.error = err; console.log(err); return next(); },
+                (err) => { req.error = err; return next(); },
                 () => {
                     User.hashAndSave({username, password}).subscribe(
                         () => null,
-                        (err) => { req.error = err; console.log(err); return next(); },
+                        (err) => { req.error = err; return next(); },
                         () => { res.status(200).json({message: "registered"}); },
                     );
                 },
