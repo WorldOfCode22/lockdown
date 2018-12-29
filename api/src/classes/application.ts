@@ -5,8 +5,11 @@ import { ErrorOnlyCallback } from "../interfaces";
 import bodyParser = require("body-parser");
 import { userRouter } from "../routes/users";
 import { errorHandler } from "../middleware/errorHandler";
+import cookieSession from "cookie-session";
+import { Server } from "http";
 export class Application {
     private app: express.Application;
+    private server: Server | null = null;
     constructor(callback?: () => void) {
         console.log("Loading Application");
         this.app = express();
@@ -18,13 +21,18 @@ export class Application {
             this.applyPreRouteMiddleware();
             this.applyRoutes();
             this.postRouteMiddleware();
-            this.startServer();
+            this.server = this.startServer();
             if (callback) { callback(); }
         });
     }
 
     private applyPreRouteMiddleware() {
         this.app.use(bodyParser.json());
+        this.app.use(cookieSession({
+            name: "session",
+            keys: ["fsfsfsfsf"],
+            maxAge: 1000 * 60 * 60 * 8,
+        }));
     }
 
     private applyRoutes() {
@@ -42,10 +50,11 @@ export class Application {
     }
 
     private startServer() {
-        this.app.listen(Environment.port, () => {
+        return this.app.listen(Environment.port, () => {
             console.log("Application Loaded");
         });
     }
 
     get App() { return this.app; }
+    get Server() { return this.server; }
 }
