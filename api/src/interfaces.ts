@@ -16,6 +16,7 @@ export interface IValidator {
 
 export interface IRequest extends Request {
     error?: Error;
+    session?: any;
 }
 
 export interface ICandidateUser {
@@ -31,6 +32,7 @@ export interface IUser {
 export interface IUserDoc extends Document, IUser {}
 export interface IUserModel extends Model<IUserDoc> {
     hashAndSave: (user: ICandidateUser) => Observable<void>;
+    getUserAndCompare: (user: ICandidateUser) => Observable<IUserDoc>;
 }
 
 export type ErrorOnlyCallback = (error?: Error) => any;
