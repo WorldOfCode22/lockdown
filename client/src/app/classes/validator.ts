@@ -80,12 +80,12 @@ export abstract class Validator {
   }
 
   static ValidateProviderNameInput(input: string) {
-    if (input.length > 0) {return true}
+    if (input.length > 0) {return true; }
     return false;
   }
 
   static ValidateProviderPasswordInput(input: string) {
-    if (input.length > 0) {return true}
+    if (input.length > 0) {return true; }
     return false;
   }
 }
