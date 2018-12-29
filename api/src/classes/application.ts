@@ -7,6 +7,7 @@ import { userRouter } from "../routes/users";
 import { errorHandler } from "../middleware/errorHandler";
 import cookieSession from "cookie-session";
 import { Server } from "http";
+import { parseSession } from "../middleware/parseSession";
 export class Application {
     private app: express.Application;
     private server: Server | null = null;
@@ -33,6 +34,7 @@ export class Application {
             keys: ["fsfsfsfsf"],
             maxAge: 1000 * 60 * 60 * 8,
         }));
+        this.app.use(parseSession);
     }
 
     private applyRoutes() {
