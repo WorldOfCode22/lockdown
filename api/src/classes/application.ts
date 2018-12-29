@@ -4,9 +4,10 @@ import { Environment } from "../config/public-config";
 import { ErrorOnlyCallback } from "../interfaces";
 import bodyParser = require("body-parser");
 import { userRouter } from "../routes/users";
+import { errorHandler } from "../middleware/errorHandler";
 export class Application {
     private app: express.Application;
-    constructor() {
+    constructor(callback?: () => void) {
         console.log("Loading Application");
         this.app = express();
         this.startMongo((error) => {
@@ -16,7 +17,9 @@ export class Application {
             }
             this.applyPreRouteMiddleware();
             this.applyRoutes();
+            this.postRouteMiddleware();
             this.startServer();
+            if (callback) { callback(); }
         });
     }
 
@@ -26,6 +29,10 @@ export class Application {
 
     private applyRoutes() {
         this.app.use("/api/users", userRouter);
+    }
+
+    private postRouteMiddleware() {
+        this.app.use(errorHandler);
     }
 
     private startMongo(callback: ErrorOnlyCallback) {
@@ -39,4 +46,6 @@ export class Application {
             console.log("Application Loaded");
         });
     }
+
+    get App() { return this.app; }
 }
