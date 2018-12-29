@@ -71,11 +71,13 @@ export abstract class Validator {
 
     // method to see if enough upper case chars are present to pass validation
     public static isEnoughUpperCase(str: string, minUpperCaseChars: number) {
+        const specialChars = "!@#$%^&*()_-+={[]}:;.>,</`~";
         let actualUpperCaseChars = 0;
         let valid = false;
         /// loop through chars in  string
         for (const char of str) {
-            if (char.toUpperCase() === char) { actualUpperCaseChars++; }
+            /// check char is uppercase and not a special char
+            if (char.toUpperCase() === char && specialChars.indexOf(char) === -1) { actualUpperCaseChars++; }
             if (actualUpperCaseChars >= minUpperCaseChars) { valid = true; break; }
         }
         return valid;
