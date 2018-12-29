@@ -1,7 +1,8 @@
 import { Schema, model } from "mongoose";
 import { IUserModel, IUserDoc, IValidator, ICandidateUser, IUser } from "../interfaces";
 import { Observable } from "rxjs";
-import { hash } from "bcryptjs";
+import { hash, compare } from "bcryptjs";
+import { ValidationError } from "../classes/errors/validation-error";
 
 export const usernameValidator: IValidator = {
     min: 8,
@@ -20,6 +21,7 @@ const UserSchema = new Schema({
         type: String,
         minlength: usernameValidator.min,
         maxlength: usernameValidator.max,
+        unique: true,
     },
     hash: {
         type: String,
@@ -42,6 +44,23 @@ UserSchema.statics.hashAndSave = function(user: ICandidateUser) {
                     observer.unsubscribe();
                 });
             }
+        });
+    });
+};
+
+UserSchema.statics.getUserAndCompare = function(user: ICandidateUser) {
+    const self: IUserModel = this;
+    const userToSave: IUser = { username: user.username, hash: "" };
+    return new Observable<IUserDoc>((observer) => {
+        self.findOne({username: user.username}, (err, doc) => {
+            if (err) { observer.error(err); observer.unsubscribe(); return; }
+            if (!doc) { observer.error( new ValidationError("Invalid login")); observer.unsubscribe(); return; }
+            compare(user.password, doc.hash, (compareErr, done) => {
+                if (compareErr) { observer.error(compareErr); observer.unsubscribe(); return; }
+                if (!done) { observer.error( new ValidationError("Invalid login")); observer.unsubscribe(); return; }
+                observer.next(doc);
+                observer.unsubscribe();
+            });
         });
     });
 };
