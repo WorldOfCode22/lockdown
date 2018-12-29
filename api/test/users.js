@@ -117,6 +117,7 @@ describe("register /api/users post", function() {
 
 describe("login /api/users/login post", function() {
     let server;
+    let application;
     let newUser = {
         username: "t".repeat(Validator.username.max),
         hash: hashSync("T".repeat(Validator.password.max -1 ) + "#"),
@@ -124,8 +125,8 @@ describe("login /api/users/login post", function() {
     }
 
     before( function(done) {
-        const Application = new app.Application(() => {
-            server = Application.App
+        application = new app.Application(() => {
+            server = application.App
             done();
         });
     });
@@ -236,4 +237,70 @@ describe("login /api/users/login post", function() {
             done();
         });
     });
+
+    after(function(done) {
+        application.Server.close();
+        done();
+    });
 });
+
+describe("/api/users get request", function() {
+    let server;
+    let application;
+    let newUser = {
+        username: "t".repeat(Validator.username.max),
+        hash: hashSync("T".repeat(Validator.password.max -1 ) + "#"),
+        password: "T".repeat(Validator.password.max -1 ) + "#"
+    }
+
+    before( function(done) {
+        application = new app.Application(() => {
+            server = application.App
+            done();
+        });
+    });
+
+    beforeEach(function(done) {
+        User.deleteMany({}, (err) => {
+            if (err) {done(err)}
+            User.create({username: newUser.username, hash: newUser.hash}, (err) => {
+                if (err) {done(err)}
+                done();
+            })
+        });
+    });
+
+    it("returns 200 and the user with session cookie present", function() {
+        const agent = chai.request.agent(server)
+        return agent.post("/api/users/login").send(
+            {username: newUser.username, password: newUser.password}
+        ).then(function(res) {
+            expect(res).to.have.cookie("session");
+
+            return agent.get("/api/users").then(
+                function(res) {
+                    // if (err) {done(err)}
+                    expect(res).to.have.status(200, "invalid status");
+                    expect(res.body).to.be.an("object", "no body provided")
+                    expect(res.body).to.have.property("user");
+                    expect(res.body.user).to.have.property("username", newUser.username);
+                    agent.close();
+            });
+        });
+    });
+
+    it("returns 401 and an AuthorizationError with session cookie not present", function(done) {
+        chai.request(server).get("/api/users").send().end((err, res) => {
+            if (err) {done(err)}
+            expect(res).to.have.status(401, "invalid status");
+            expect(res.body).to.be.an("object", "no body provided");
+            expect(res.body).to.have.property("AuthorizationError");
+            done();
+        });
+    });
+
+    after(function(done) {
+        application.Server.close();
+        done();
+    });
+})

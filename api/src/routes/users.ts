@@ -3,6 +3,7 @@ import { Validator } from "../classes/validator";
 import { ValidationError } from "../classes/errors/validation-error";
 import { IRequest } from "../interfaces";
 import { User } from "../models/user-model";
+import { AuthorizationError } from "../classes/errors/authorization-error";
 
 const userRouter = Router();
 
@@ -51,6 +52,11 @@ userRouter.post("/login", (req: IRequest, res, next) => {
             );
         },
     );
+});
+
+userRouter.get("/", (req: IRequest, res, next) => {
+    if (!req.user) { req.error = new AuthorizationError("You are not logged in"); return next(); }
+    res.status(200).json({user: req.user});
 });
 
 export { userRouter };
