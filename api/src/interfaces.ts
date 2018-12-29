@@ -17,6 +17,7 @@ export interface IValidator {
 export interface IRequest extends Request {
     error?: Error;
     session?: any;
+    user?: IUserDoc;
 }
 
 export interface ICandidateUser {
