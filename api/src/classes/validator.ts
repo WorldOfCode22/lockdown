@@ -1,11 +1,16 @@
 import { Observable } from "rxjs";
-import { User, usernameValidator, passwordValidator } from "../models/user-model";
+import { User, usernameValidator,
+    passwordValidator, providerPasswordValidator, providerNameValidator } from "../models/user-model";
 import { ValidationError } from "./errors/validation-error";
 
 export abstract class Validator {
     public static username = usernameValidator;
 
     public static password = passwordValidator;
+
+    public static providerName = providerNameValidator;
+
+    public static providerPassword = providerPasswordValidator;
 
     public static validateUsername(username: string, checkTaken: boolean) {
         const usernameSpec = Validator.username;
