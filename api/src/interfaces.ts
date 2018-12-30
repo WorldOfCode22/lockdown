@@ -28,9 +28,18 @@ export interface ICandidateUser {
 export interface IUser {
     username: string;
     hash: string;
+    providers: IProvider[];
 }
 
-export interface IUserDoc extends Document, IUser {}
+export interface IProvider {
+    providerName: string;
+    password: string;
+}
+
+export interface IUserDoc extends Document, IUser {
+    addProvider: (provider: IProvider) => Observable<IProvider[]>;
+}
+
 export interface IUserModel extends Model<IUserDoc> {
     hashAndSave: (user: ICandidateUser) => Observable<void>;
     getUserAndCompare: (user: ICandidateUser) => Observable<IUserDoc>;
