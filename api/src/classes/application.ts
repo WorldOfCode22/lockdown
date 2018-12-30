@@ -8,6 +8,7 @@ import { errorHandler } from "../middleware/errorHandler";
 import cookieSession from "cookie-session";
 import { Server } from "http";
 import { parseSession } from "../middleware/parseSession";
+import { providerRouter } from "../routes/providers";
 export class Application {
     private app: express.Application;
     private server: Server | null = null;
@@ -39,6 +40,7 @@ export class Application {
 
     private applyRoutes() {
         this.app.use("/api/users", userRouter);
+        this.app.use("/api/providers", providerRouter);
     }
 
     private postRouteMiddleware() {
