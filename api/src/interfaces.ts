@@ -34,6 +34,7 @@ export interface IUser {
 export interface IProvider {
     providerName: string;
     password: string;
+    _id?: string;
 }
 
 export interface IUserDoc extends Document, IUser {

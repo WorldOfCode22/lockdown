@@ -149,3 +149,147 @@ describe("/api/providers post", function() {
         done();
     });
 });
+
+describe("/api/providers GET", function() {
+    let server;
+    let application;
+    let newUser = {
+        username: "t".repeat(Validator.username.max),
+        hash: hashSync("T".repeat(Validator.password.max -1 ) + "#"),
+        password: "T".repeat(Validator.password.max -1 ) + "#",
+        providers: [{providerName: "T", password: "T"}]
+    }
+
+    before( function(done) {
+        application = new app.Application(() => {
+            server = application.App
+            done();
+        });
+    });
+
+    beforeEach(function(done) {
+        User.deleteMany({}, (err) => {
+            if (err) {done(err)}
+            User.create({username: newUser.username, hash: newUser.hash,
+                providers: newUser.providers}, (err, doc) => {
+                if (err) {done(err)}
+                done();
+            })
+        });
+    });
+
+    it("can return 200 and get providers if user is logged in", function() {
+        const agent = chai.request.agent(server);
+        return agent.post("/api/users/login").send(
+            {username: newUser.username, password: newUser.password}
+        ).then(function(res) {
+            expect(res).to.have.cookie("session");
+
+            return agent.get("/api/providers").send().then(function(res2) {
+                expect(res2).to.have.status(200);
+                expect(res2.body).to.be.an("object", "no body provided");
+                expect(res2.body).to.have.an.property("providers");
+                expect(res2.body.providers[0]).to.have.a.property("providerName", newUser.providers[0].providerName);
+                expect(res2.body.providers[0]).to.have.a.property("password", newUser.providers[0].password);
+            });
+        });
+    });
+
+    it("Will return 401 and not a AuthorizationError if user is not logged in", function(done) {
+        chai.request(server).get("/api/providers").send().end((err, res) => {
+            if(err) {done(err)}
+            expect(res).to.have.status(401);
+            expect(res.body).to.be.an("object", "no body provided");
+            expect(res.body).to.have.an.property("AuthorizationError");
+            done();
+        });
+    });
+
+    after(function(done) {
+        application.Server.close();
+        done();
+    });
+});
+
+describe("api/providers DELETE", function() {
+    let server;
+    let application;
+    let newUser = {
+        username: "t".repeat(Validator.username.max),
+        hash: hashSync("T".repeat(Validator.password.max -1 ) + "#"),
+        password: "T".repeat(Validator.password.max -1 ) + "#",
+        providers: [{providerName: "T", password: "T"}]
+    }
+
+    before( function(done) {
+        application = new app.Application(() => {
+            server = application.App
+            done();
+        });
+    });
+
+    beforeEach(function(done) {
+        User.deleteMany({}, (err) => {
+            if (err) {done(err)}
+            User.create({username: newUser.username, hash: newUser.hash,
+                providers: newUser.providers}, (err, doc) => {
+                if (err) {done(err)}
+                newUser.providers[0] = doc.providers[0];
+                done();
+            })
+        });
+    });
+
+    it("will return 200 and deleted provider if user is logged in and id provided", function() {
+        const agent = chai.request.agent(server);
+        return agent.post("/api/users/login").send(
+            {username: newUser.username, password: newUser.password}
+        ).then(function(res) {
+            expect(res).to.have.cookie("session");
+
+            return agent.delete("/api/providers").send(
+                {id: newUser.providers[0]._id}
+            ).then(function(res2) {
+                expect(res2).to.have.status(200);
+                expect(res2.body).to.be.an("object", "no body provided");
+                expect(res2.body).to.have.an.property("provider");
+                expect(res2.body.provider).to.have.a.property("providerName", newUser.providers[0].providerName);
+                expect(res2.body.provider).to.have.a.property("password", newUser.providers[0].password);
+            });
+        });
+    });
+
+    it("will return 400 and ValidationError if invalid id is provided", function() {
+        const agent = chai.request.agent(server);
+        return agent.post("/api/users/login").send(
+            {username: newUser.username, password: newUser.password}
+        ).then(function(res) {
+            expect(res).to.have.cookie("session");
+
+            return agent.delete("/api/providers").send(
+                {id: '122334455667'}
+            ).then(function(res2) {
+                expect(res2).to.have.status(400);
+                expect(res2.body).to.be.an("object", "no body provided");
+                expect(res2.body).to.have.an.property("ValidationError");
+            });
+        });
+    });
+    
+    it("will return 401 and authorization error if user is not logged in", function(done) {
+        chai.request(server).delete("/api/providers").send(
+            {id: newUser.providers[0]._id}
+        ).end((err, res) => {
+            if(err) {done(err)}
+            expect(res).to.have.status(401);
+            expect(res.body).to.be.an("object", "no body provided");
+            expect(res.body).to.have.an.property("AuthorizationError");
+            done();
+        });
+    });
+
+    after(function(done) {
+        application.Server.close();
+        done();
+    });
+});
