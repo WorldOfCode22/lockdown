@@ -303,4 +303,125 @@ describe("/api/users get request", function() {
         application.Server.close();
         done();
     });
-})
+});
+
+describe("/api/users delete", function() {
+    let server;
+    let application;
+    let newUser = {
+        username: "t".repeat(Validator.username.max),
+        hash: hashSync("T".repeat(Validator.password.max -1 ) + "#"),
+        password: "T".repeat(Validator.password.max -1 ) + "#"
+    }
+
+    before( function(done) {
+        application = new app.Application(() => {
+            server = application.App
+            done();
+        });
+    });
+
+    beforeEach(function(done) {
+        User.deleteMany({}, (err) => {
+            if (err) {done(err)}
+            User.create({username: newUser.username, hash: newUser.hash}, (err) => {
+                if (err) {done(err)}
+                done();
+            })
+        });
+    });
+
+    it("returns 401 and AuthorizationError if not logged in", function(done) {
+        chai.request(server).delete("/api/users").send().end((err, res) => {
+            if(err) {done(err)}
+            expect(res).to.have.status(401);
+            expect(res.body).to.be.an("object", "no body provided");
+            expect(res.body).to.have.an.property("AuthorizationError");
+            done();
+        });
+    });
+
+    it("returns 200 and true if user is logged in", function() {
+        const agent = chai.request.agent(server);
+        return agent.post("/api/users/login").send(
+            {username: newUser.username, password: newUser.password}
+        ).then(function(res) {
+            expect(res).to.have.cookie("session");
+
+            return agent.delete("/api/users").send().then(function(res2) {
+                expect(res2).to.have.status(200);
+                expect(res2.body).to.be.an("object", "no body provided");
+                expect(res2.body).to.have.an.property("deleted", true);
+            });
+        });
+    });
+
+    after(function(done) {
+        application.Server.close();
+        done();
+    });
+});
+
+describe("/api/users put", function() {
+    let server;
+    let application;
+    let newUser = {
+        username: "t".repeat(Validator.username.max),
+        hash: hashSync("T".repeat(Validator.password.max -1 ) + "#"),
+        password: "T".repeat(Validator.password.max -1 ) + "#"
+    }
+
+    before( function(done) {
+        application = new app.Application(() => {
+            server = application.App
+            done();
+        });
+    });
+
+    beforeEach(function(done) {
+        User.deleteMany({}, (err) => {
+            if (err) {done(err)}
+            User.create({username: newUser.username, hash: newUser.hash}, (err) => {
+                if (err) {done(err)}
+                done();
+            })
+        });
+    });
+
+    it("Will return 401 an AuthorizationError if not logged in", function(done) {
+        chai.request(server).put("/api/users").send(
+            {username: "t".repeat(Validator.username.max), password: "t".repeat(Validator.password.max)}
+        ).end((err, res) => {
+            if(err) {done(err)}
+            expect(res).to.have.status(401);
+            expect(res.body).to.be.an("object", "no body provided");
+            expect(res.body).to.have.an.property("AuthorizationError");
+            done();
+        });
+    });
+
+    it("Will return 200 and updated user if request is valid", function() {
+        const agent = chai.request.agent(server);
+        return agent.post("/api/users/login").send(
+            {username: newUser.username, password: newUser.password}
+        ).then(function(res) {
+            expect(res).to.have.cookie("session");
+
+            return agent.put("/api/users").send(
+                { username: 'x'.repeat(Validator.username.max), password: 'X'.repeat(Validator.password.max -1) + "!"}
+            ).then(function(res2) {
+                expect(res2).to.have.status(200);
+                expect(res2.body).to.be.an("object", "no body provided");
+                expect(res2.body).to.have.an.property("user");
+                expect(res2.body.user).to.have.property("username", 'x'.repeat(Validator.username.max));
+                expect(res2.body.user).to.have.property("hash");
+                expect(res2.body.user.hash).to.not.equal(newUser.hash);
+            });
+        });
+    });
+
+    after(function(done) {
+        application.Server.close();
+        done();
+    });
+});
