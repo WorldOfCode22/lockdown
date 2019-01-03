@@ -1,0 +1,29 @@
+<div class="center">
+  <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+    <mat-button-toggle #registerToggle (change)="registerSelect()" value="register">Register</mat-button-toggle>
+    <mat-button-toggle #loginToggle (change)="loginSelect()" value="login">Login</mat-button-toggle>
+  </mat-button-toggle-group>
+  <h3>{{mode}}</h3>
+</div>
+
+<div class="flex-container">
+  <div id="left-margin"></div>
+  <div id="form" class="center">
+    <form>
+      <ul class="unstyled-list">
+        <li>
+          <mat-form-field>
+            <input matInput placeholder="Username" [formControl]="usernameField" required>
+          </mat-form-field>
+        </li>
+        <li>
+          <mat-form-field>
+            <input matInput placeholder="Password" [formControl]="passwordField" required>
+          </mat-form-field>
+        </li>
+      </ul>
+      <button mat-button type="submit">{{mode}}</button>
+    </form>
+  </div>
+  <div id="right-margin"></div>
+</div>
