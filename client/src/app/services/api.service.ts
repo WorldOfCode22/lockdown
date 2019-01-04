@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IUser, IProvider } from '../classes/user';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpRequest, HttpEvent } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 export interface IAPI {
@@ -13,7 +13,7 @@ export interface IAPI {
   createProvider: (provider: IProviderInput) => Observable<{providers: IProvider[]}>;
   getProvider: (id: string) => Observable<{providers: IProvider[]}>;
   editProvider: (provider: IEditProvider) => Observable<{provider: IProvider}>;
-  deleteProvider: (id: string) => Observable<{provider: IProvider}>;
+  deleteProvider: (id: string) => Observable<HttpEvent<{provider: IProvider}>>;
 }
 
 export interface IUserInput {
@@ -53,7 +53,7 @@ export class ApiService implements IAPI {
   }
 
   deleteUser() {
-    return this.http.delete<{deleted: true}>(`${environment.baseApiUrl}/api/users/login`);
+    return this.http.delete<{deleted: true}>(`${environment.baseApiUrl}/api/users/`);
   }
 
   getUser() {
@@ -61,7 +61,7 @@ export class ApiService implements IAPI {
   }
 
   editUser(input: IEditUser) {
-    return this.http.put<{user: IUser}>(`${environment.baseApiUrl}/api/users/login`, input);
+    return this.http.put<{user: IUser}>(`${environment.baseApiUrl}/api/users/`, input);
   }
 
   createProvider(input: IProviderInput) {
@@ -73,7 +73,9 @@ export class ApiService implements IAPI {
   }
 
   deleteProvider(id: string) {
-    return this.http.delete<{provider: IProvider}>(`${environment.baseApiUrl}/api/providers`, {observe: 'body', params: {id}}, );
+    return this.http.request<{provider: IProvider}>(
+      new HttpRequest('DELETE', `${environment.baseApiUrl}/api/providers`, {body: id})
+    );
   }
 
   editProvider(input: IEditProvider) {

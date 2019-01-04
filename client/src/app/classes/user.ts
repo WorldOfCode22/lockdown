@@ -1,4 +1,5 @@
 export interface IUser {
+    _id: string;
     username: string;
     hash: string;
     providers: IProvider[];
